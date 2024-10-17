@@ -11,7 +11,7 @@
 
 - name: Check if pip supports breakin-system-packages option
   set_fact:
-    pip_break_system_packages_support: "{{ pip_version.stdout | version_compare('23.0.1', '>=') }}"
+    pip_break_system_packages_support: "{{ pip_version.stdout is version_compare('23.0.1', '>=') }}"
   when: pip_version is defined
 
 - name: Ensure pip_install_packages are installed.
