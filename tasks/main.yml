@@ -1,0 +1,26 @@
+---
+- name: Ensure Pip is installed
+  ansible.builtin.package:
+    name: "{{ pip_package }}"
+    state: present
+
+- name: Get installed pip version
+  ansible.builtin.shell: "{{ pip_executable }} --version | awk '{split($2, a, \".\"); print a[1] \".\" a[2] \".\" a[3]}'"
+  register: pip_version
+  changed_when: false
+
+- name: Check if pip supports breakin-system-packages option
+  set_fact:
+    pip_break_system_packages_support: "{{ pip_version.stdout | version_compare('23.0.1', '>=') }}"
+  when: pip_version is defined
+
+- name: Ensure pip_install_packages are installed.
+  pip:
+    name: "{{ item.name | default(item) }}"
+    version: "{{ item.version | default(omit) }}"
+    virtualenv: "{{ item.virtualenv | default(omit) }}"
+    state: "{{ item.state | default(omit) }}"
+    extra_args: "{{ item.extra_args | default(omit) }}"
+    executable: "{{ item.virtualenv | default(false) | ternary(omit, pip_executable) }}"
+    breakin_system_packages: "{{ item.breakin_system_packages | default(false) | ternary(omit, pip_break_system_packages_support) }}"
+  loop: "{{ pip_install_packages }}"
