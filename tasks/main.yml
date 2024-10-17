@@ -4,6 +4,16 @@
     name: "{{ pip_package }}"
     state: present
 
+- name: Get installed python3 version
+  ansible.builtin.shell: python3 --version | awk '{split($2, a, "."); print a[1] "." a[2]}'
+  register: py3ver
+  changed_when: false
+
+- name: Check if environment is EXTERNALLY-MANAGED
+  set_fact:
+    pip_externally_managed: "{{ py3ver.stdout is version_compare('3.11', '>=') }}"
+  when: py3ver is defined
+
 - name: Get installed pip version
   ansible.builtin.shell: "{{ pip_executable }} --version | awk '{split($2, a, \".\"); print a[1] \".\" a[2] \".\" a[3]}'"
   register: pip_version
@@ -22,5 +32,5 @@
     state: "{{ item.state | default(omit) }}"
     extra_args: "{{ item.extra_args | default(omit) }}"
     executable: "{{ item.virtualenv | default(false) | ternary(omit, pip_executable) }}"
-    break_system_packages: "{{ item.break_system_packages | default(false) | ternary(omit, pip_break_system_packages_support) }}"
+    break_system_packages: "{{ pip_break_system_packages_support | ternary(item.break_system_packages | default(false), omit) }}"
   loop: "{{ pip_install_packages }}"
