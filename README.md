@@ -67,4 +67,4 @@ None.
           - name: awscli
     
       roles:
-        - soramitsukhmer-lab.unsafe-pip
+        - socheatsok78-lab.unsafe-pip
