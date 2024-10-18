@@ -6,23 +6,19 @@
 
 - name: Get installed python3 version
   ansible.builtin.shell: python3 --version | awk '{split($2, a, "."); print a[1] "." a[2]}'
-  register: py3ver
+  register: python3_version
   changed_when: false
-
-- name: Check if environment is EXTERNALLY-MANAGED
-  set_fact:
-    pip_externally_managed: "{{ py3ver.stdout is version_compare('3.11', '>=') }}"
-  when: py3ver is defined
 
 - name: Get installed pip version
   ansible.builtin.shell: "{{ pip_executable }} --version | awk '{split($2, a, \".\"); print a[1] \".\" a[2] \".\" a[3]}'"
   register: pip_version
   changed_when: false
 
-- name: Check if pip supports breakin-system-packages option
+- name: Set facts
   set_fact:
+    pip_externally_managed: "{{ python3_version.stdout is version_compare('3.11', '>=') }}"
     pip_break_system_packages_support: "{{ pip_version.stdout is version_compare('23.0.1', '>=') }}"
-  when: pip_version is defined
+  when: python3_version is defined and pip_version is defined
 
 - name: Ensure pip_install_packages are installed.
   pip:
