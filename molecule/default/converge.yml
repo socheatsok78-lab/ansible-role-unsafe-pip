@@ -30,10 +30,15 @@
     - role: socheatsok78.unsafe-pip
 
   tasks:
+    - name: Debug python version
+      debug:
+        var: python3_version
+    - name: Debug pip version
+      debug:
+        var: pip_version
     - name: Debug pip_externally_managed fact
       debug:
         var: pip_externally_managed
-
     - name: Debug pip_break_system_packages_support fact
       debug:
         var: pip_break_system_packages_support
