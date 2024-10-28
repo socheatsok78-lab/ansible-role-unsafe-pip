@@ -20,13 +20,8 @@
     pip_break_system_packages_support: "{{ pip_version.stdout is version_compare('23.0.1', '>=') }}"
   when: python3_version is defined and pip_version is defined
 
-- name: Ensure pip_install_packages are installed.
-  pip:
-    name: "{{ item.name | default(item) }}"
-    version: "{{ item.version | default(omit) }}"
-    virtualenv: "{{ item.virtualenv | default(omit) }}"
-    state: "{{ item.state | default(omit) }}"
-    extra_args: "{{ item.extra_args | default(omit) }}"
-    executable: "{{ item.virtualenv | default(false) | ternary(omit, pip_executable) }}"
-    break_system_packages: "{{ pip_break_system_packages_support | ternary(item.break_system_packages | default(false), omit) }}"
-  loop: "{{ pip_install_packages }}"
+- include_tasks: pip-modern.yml
+  when: ansible_version.full is version_compare('2.17', '>=')
+
+- include_tasks: pip-legacy.yml
+  when: ansible_version.full is version_compare('2.17', '<')
