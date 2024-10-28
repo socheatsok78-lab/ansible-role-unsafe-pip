@@ -6,7 +6,7 @@ galaxy_info:
   author: socheatsok78
   description: Upgrade `pip` to the latest version
   issue_tracker_url: https://github.com/soramitsukhmer-lab/ansible-role-unsafe-pip/issues
-  company: "Socheat Sok"
+  company: "socheatsok78"
   license: "license (BSD, MIT)"
   min_ansible_version: "2.4"
   platforms: []
