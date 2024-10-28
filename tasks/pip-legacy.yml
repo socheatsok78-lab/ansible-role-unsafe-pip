@@ -4,6 +4,6 @@
     version: "{{ item.version | default(omit) }}"
     virtualenv: "{{ item.virtualenv | default(omit) }}"
     state: "{{ item.state | default(omit) }}"
-    extra_args: "{{ item.extra_args }} {{ '--break-system-packages' if pip_break_system_packages_support and item.break_system_packages | default(false) }}"
+    extra_args: "{{ item.extra_args | default('') }} {{ '--break-system-packages' if pip_break_system_packages_support and item.break_system_packages | default(false) }}"
     executable: "{{ item.virtualenv | default(false) | ternary(omit, pip_executable) }}"
   loop: "{{ pip_install_packages }}"
